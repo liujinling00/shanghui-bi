@@ -228,7 +228,7 @@ section{padding:14px 24px 2px}
 /* ============================================================
    明细表
    ============================================================ */
-.table-panel{margin-top:13px}
+.table-panel{margin-top:13px;scroll-margin-top:76px}
 .tbl-toolbar{display:flex;align-items:center;gap:12px;padding:12px 16px 8px;flex-wrap:wrap}
 .tbl-toolbar h3{font-size:12.5px;font-weight:600;color:var(--tx-2);letter-spacing:.5px;display:flex;align-items:center;gap:7px}
 .tbl-count{font-size:11px;color:var(--tx-3)}
@@ -783,13 +783,26 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
     }).join(' ').toLocaleLowerCase('zh-CN');
   }
 
-  function applyFilters() {
+  function scrollToMemberTable() {
+    var tablePanel = document.querySelector('.table-panel');
+    if (!tablePanel) return;
+    tablePanel.scrollIntoView({
+      behavior: REDUCED_MOTION ? 'auto' : 'smooth',
+      block: 'start'
+    });
+  }
+
+  function applyFilters(shouldScroll) {
     var query = ($('globalSearch').value || '').trim().toLocaleLowerCase('zh-CN');
     state.filtered = MEMBERS.filter(function (d) {
       return !query || searchText(d).indexOf(query) >= 0;
     });
     clearActiveCards();
     refreshDataViews();
+    if (shouldScroll && query) {
+      clearTimeout(state.searchScrollTimer);
+      state.searchScrollTimer = setTimeout(scrollToMemberTable, 180);
+    }
   }
 
   function resetFilters() {
@@ -1571,7 +1584,7 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
     updateTable();
     renderCustomCards();
 
-    $('globalSearch').addEventListener('input', applyFilters);
+    $('globalSearch').addEventListener('input', function () { applyFilters(true); });
     $('globalSearch').addEventListener('keydown', function (e) {
       if (e.key === 'Escape') resetFilters();
     });
