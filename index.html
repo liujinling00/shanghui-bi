@@ -1146,9 +1146,8 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
     };
   }
 
-  function getLogoSrc() {
-    var img = $('logoImg');
-    return img ? img.src : '';
+  function getLogoSymbol() {
+    return 'image://./assets/logo.jpg';
   }
 
   function onZoomChanged(force) {
@@ -1157,11 +1156,10 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
     var geoOpt = opt.geo && opt.geo[0];
     if (!geoOpt) return;
     var zoom = geoOpt.zoom || 1;
-    var mode = zoom > 6 ? 'logo' : zoom > 2.8 ? 'large' : 'normal';
+    var mode = zoom > 2.2 ? 'logo' : zoom > 1.45 ? 'large' : 'normal';
     if (!force && mode === liaoningPointMode) return;
     liaoningPointMode = mode;
 
-    var logo = getLogoSrc();
     var pointOption = {
       type: 'effectScatter',
       coordinateSystem: 'geo',
@@ -1173,17 +1171,16 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
       rippleEffect: { show: false },
       symbol: 'circle',
       symbolSize: mode === 'large' ? 10 : 7,
-      progressive: 200,
-      progressiveThreshold: 100,
       itemStyle: { borderColor: '#0a1525', borderWidth: 0.5 },
       emphasis: {
         itemStyle: { color: '#fff', borderColor: '#4fc3f7', borderWidth: 2, shadowBlur: 16, shadowColor: 'rgba(79,195,247,.7)' },
         scale: 2
       }
     };
-    if (mode === 'logo' && logo) {
-      pointOption.symbol = 'image://' + logo;
-      pointOption.symbolSize = 24;
+    if (mode === 'logo') {
+      pointOption.symbol = getLogoSymbol();
+      pointOption.symbolSize = 26;
+      pointOption.itemStyle = { borderColor: 'transparent', borderWidth: 0, shadowBlur: 0 };
     }
     liaoningChart.setOption({
       animation: false,
@@ -1252,8 +1249,6 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
         rippleEffect: { show: false },
         symbol: 'circle',
         symbolSize: 7,
-        progressive: 200,
-        progressiveThreshold: 100,
         itemStyle: { borderColor: '#0a1525', borderWidth: 0.5 },
         emphasis: {
           itemStyle: { color: '#fff', borderColor: '#4fc3f7', borderWidth: 2, shadowBlur: 16, shadowColor: 'rgba(79,195,247,.7)' },
@@ -1284,8 +1279,6 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
         rippleEffect: { show: false },
         symbol: 'circle',
         symbolSize: 7,
-        progressive: 200,
-        progressiveThreshold: 100,
         itemStyle: { borderColor: '#0a1525', borderWidth: 0.5 },
         emphasis: {
           itemStyle: { color: '#fff', borderColor: '#4fc3f7', borderWidth: 2, shadowBlur: 16, shadowColor: 'rgba(79,195,247,.7)' },
@@ -1312,43 +1305,10 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
     return dd;
   }
 
-  function heatColor(value, max) {
-    var stops = [
-      [8, 21, 37], [13, 40, 72], [20, 90, 138],
-      [44, 127, 184], [79, 195, 247], [129, 212, 250]
-    ];
-    var ratio = Math.max(0, Math.min(1, value / Math.max(max, 1)));
-    var pos = ratio * (stops.length - 1);
-    var index = Math.min(Math.floor(pos), stops.length - 2);
-    var t = pos - index;
-    var a = stops[index], b = stops[index + 1];
-    return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * t) + ',' +
-      Math.round(a[1] + (b[1] - a[1]) * t) + ',' +
-      Math.round(a[2] + (b[2] - a[2]) * t) + ')';
-  }
-
-  function shenyangRegions(dd, max) {
+  function shenyangMapData(dd) {
     return window.SHENYANG_GEO.features.map(function (f) {
       var name = f.properties.name;
-      var count = dd[name] || 0;
-      return {
-        name: name,
-        itemStyle: {
-          areaColor: heatColor(count, max),
-          borderColor: '#152d45',
-          borderWidth: 1
-        },
-        label: {
-          show: true,
-          color: '#6b8ba4',
-          fontSize: 8,
-          formatter: name + '\n' + count + '家'
-        },
-        emphasis: {
-          itemStyle: { areaColor: '#1565c0', shadowBlur: 15, shadowColor: 'rgba(79,195,247,.3)' },
-          label: { color: '#fff', fontSize: 10 }
-        }
-      };
+      return { name: name, value: dd[name] || 0, count: dd[name] || 0 };
     });
   }
 
@@ -1357,68 +1317,63 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
     echarts.registerMap('shenyang', window.SHENYANG_GEO);
     var dd = districtCounts();
     var mx = Math.max.apply(null, Object.keys(dd).map(function (k) { return dd[k]; }).concat([1]));
+    var md = shenyangMapData(dd);
     shenyangChart.setOption({
       animation: false,
       animationDurationUpdate: 0,
       tooltip: Object.assign({
         trigger: 'item',
         formatter: function (p) {
-          var count = dd[p.name] || 0;
+          var count = (p.data && p.data.count) || 0;
           return '<b>' + p.name + '</b><br/>会员企业：<b style="color:#4fc3f7;font-size:15px">' +
             count + '</b> 家<br/><span style="color:#64809e">点击按该区筛选</span>';
         }
       }, THEME.tooltip),
-      geo: {
-        map: 'shenyang', roam: true, zoom: 1.25, center: [123.15, 41.75],
-        label: { show: true, color: '#6b8ba4', fontSize: 9 },
-        itemStyle: { areaColor: '#0a1525', borderColor: '#152d45', borderWidth: 1 },
-        regions: shenyangRegions(dd, mx),
-        emphasis: {
-          itemStyle: { areaColor: '#152d45', shadowBlur: 15, shadowColor: 'rgba(79,195,247,.3)' },
-          label: { color: '#fff', fontSize: 11 }
-        }
+      visualMap: {
+        min: 0, max: mx, text: ['高', '低'], realtime: false, calculable: true, left: 'left', bottom: 8,
+        inRange: { color: ['#081525', '#0d2848', '#144272', '#1e5a8a', '#2c7fb8', '#4fc3f7', '#81d4fa'] },
+        textStyle: { color: THEME.axisLabel }
       },
       series: [{
-        type: 'scatter', coordinateSystem: 'geo', geoIndex: 0,
-        data: scatterPoints(dd),
-        symbolSize: 5,
+        type: 'map',
+        map: 'shenyang',
+        roam: true,
+        zoom: 1.25,
+        center: [123.15, 41.75],
+        data: md,
         animation: false,
-        hoverAnimation: false,
-        progressive: 200,
-        progressiveThreshold: 100,
-        itemStyle: { color: '#00e5ff' }
+        selectedMode: false,
+        label: {
+          show: true, color: '#6b8ba4', fontSize: 8,
+          formatter: function (p) { return p.name + '\n' + ((p.data && p.data.count) || 0) + '家'; }
+        },
+        itemStyle: { areaColor: '#0a1525', borderColor: '#152d45', borderWidth: 1 },
+        emphasis: {
+          itemStyle: { areaColor: '#1565c0', shadowBlur: 15, shadowColor: 'rgba(79,195,247,.3)' },
+          label: { color: '#fff', fontSize: 10 }
+        }
       }]
     }, true);
 
     // 新增交互：点击各区 → 按区域筛选
     shenyangChart.on('click', function (params) {
-      if (params.componentType !== 'geo' && params.componentType !== 'series') return;
+      if (params.componentType !== 'series') return;
       if (!params.name) return;
       $('globalSearch').value = params.name;
       applyFilters();
     });
   }
 
-  // 修复：原版读取不存在的 properties.cp 导致散点全部落在同一坐标，
-  // 精简后的 GeoJSON 已补充 cp（质心），并增加兜底取值
-  function scatterPoints(dd) {
-    return window.SHENYANG_GEO.features
-      .filter(function (f) { return dd[f.properties.name] > 0; })
-      .map(function (f) {
-        var p = f.properties;
-        return { name: p.name, value: p.cp || p.centroid || p.center || [123.43, 41.8] };
-      });
-  }
-
   function refreshShenyang() {
     if (!shenyangChart) return;
     var dd = districtCounts();
     var mx = Math.max.apply(null, Object.keys(dd).map(function (k) { return dd[k]; }).concat([1]));
+    var md = shenyangMapData(dd);
     shenyangChart.setOption({
       animation: false,
       animationDurationUpdate: 0,
-      geo: { regions: shenyangRegions(dd, mx) },
-      series: [{ data: scatterPoints(dd) }]
+      visualMap: { max: mx },
+      series: [{ data: md }]
     });
   }
 
