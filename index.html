@@ -67,6 +67,7 @@ body{
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .brand .sub-tag{font-size:10px;color:var(--tx-4);letter-spacing:2px;margin-top:2px}
 .header-right{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.header-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
 .last-update{font-size:11px;color:var(--tx-4);font-variant-numeric:tabular-nums}
 .auto-refresh{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--tx-3);cursor:pointer;user-select:none}
 .auto-refresh input{accent-color:var(--cyan);width:14px;height:14px;cursor:pointer}
@@ -342,6 +343,11 @@ tbody tr:nth-child(even):hover td{background:rgba(79,195,247,.06)}
 @media (max-width:720px){
   .header{padding:11px 15px}
   .brand h1{font-size:14.5px;white-space:normal}
+  .header-right{gap:8px}
+  .header-actions{gap:5px}
+  .header-actions .btn{padding:5px 9px;font-size:11px}
+  .header-actions .btn .ico{font-size:11px}
+  .header-actions .header-top-btn{width:29px;height:29px}
   section{padding:11px 14px 2px}
   .charts-grid{grid-template-columns:1fr}
   .chart-card.wide{grid-column:span 1}
@@ -404,10 +410,12 @@ tbody tr:nth-child(even):hover td{background:rgba(79,195,247,.06)}
   <div class="header-right">
     <label class="auto-refresh"><input type="checkbox" id="autoRefresh" onchange="App.toggleAuto()"> 自动刷新</label>
     <span class="last-update" id="lastUpdate"></span>
-    <button class="btn" id="refreshBtn" onclick="App.doRefresh()"><span class="ico">&#10227;</span> 刷新数据</button>
-    <button class="header-top-btn" type="button" title="回到最上面" aria-label="回到最上面" onclick="App.backToTop()">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5"></path><path d="m6 11 6-6 6 6"></path></svg>
-    </button>
+    <div class="header-actions">
+      <button class="btn" id="refreshBtn" onclick="App.doRefresh()"><span class="ico">&#10227;</span> 刷新数据</button>
+      <button class="header-top-btn" type="button" title="回到最上面" aria-label="回到最上面" onclick="App.backToTop()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5"></path><path d="m6 11 6-6 6 6"></path></svg>
+      </button>
+    </div>
   </div>
 </header>
 
