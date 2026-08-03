@@ -121,7 +121,8 @@ section{padding:14px 24px 2px}
 .premium-card.active{border-color:var(--accent,var(--cyan));transform:translateY(-4px);
   box-shadow:0 0 0 2px var(--accent,var(--cyan)),0 16px 40px rgba(30,120,200,.32)}
 .card-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.card-head .icon{font-size:19px;line-height:1;filter:drop-shadow(0 0 7px var(--accent,var(--cyan)))}
+.card-head .icon{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;color:var(--accent,var(--cyan));filter:drop-shadow(0 0 7px var(--accent,var(--cyan)))}
+.card-head .icon-svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .card-head .title{font-size:12px;font-weight:600;color:var(--tx-2);letter-spacing:.6px}
 .click-hint{position:absolute;top:11px;right:13px;font-size:9px;color:var(--tx-4);opacity:0;transition:opacity .25s,transform .25s;transform:translateX(-4px)}
 .premium-card:hover .click-hint{opacity:.85;transform:none}
@@ -171,13 +172,17 @@ section{padding:14px 24px 2px}
   border:1px solid var(--line);box-shadow:var(--shadow);
 }
 .filters label{font-size:11px;color:var(--tx-3);letter-spacing:.5px}
-.filters select{
-  background:var(--bg-3);color:var(--tx-2);border:1px solid var(--line-2);border-radius:7px;
-  padding:6px 10px;font-size:12px;cursor:pointer;outline:none;min-width:84px;transition:all .2s;
+.search-field{position:relative;display:flex;align-items:center;flex:1 1 420px;min-width:220px}
+.search-field .search-ico{position:absolute;left:11px;width:16px;height:16px;color:var(--tx-3);pointer-events:none}
+.search-field input{
+  width:100%;background:var(--bg-3);color:var(--tx-1);border:1px solid var(--line-2);border-radius:7px;
+  padding:8px 11px 8px 34px;font-size:12px;outline:none;transition:all .2s;
 }
-.filters select:hover,.filters select:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(79,195,247,.12)}
+.search-field input::placeholder{color:var(--tx-4)}
+.search-field input:hover,.search-field input:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(79,195,247,.12)}
 .fbtn{background:linear-gradient(135deg,var(--blue-2),var(--blue));color:#fff;border:none;border-radius:7px;
   padding:6px 14px;font-size:12px;cursor:pointer;transition:all .2s var(--ease)}
+.btn-ico{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-2px}
 .fbtn:hover{box-shadow:0 3px 14px rgba(79,195,247,.35);transform:translateY(-1px)}
 .fbtn.rst{background:transparent;border:1px solid var(--line-2);color:var(--tx-3)}
 .fbtn.rst:hover{border-color:var(--cyan);color:var(--cyan);box-shadow:none}
@@ -328,6 +333,34 @@ tbody tr:nth-child(even):hover td{background:rgba(79,195,247,.06)}
   .kpi-row,#customCardsRow{gap:10px}
   .card-body .num{font-size:26px}
   .result-count{margin-left:0;width:100%}
+  .filters{align-items:stretch;padding:10px 11px}
+  .filters label{width:100%}
+  .search-field{flex-basis:100%;min-width:0}
+  .filters .fbtn{flex:1}
+  .tbl-toolbar{padding:11px 12px 8px}
+  .tbl-toolbar h3{font-size:12px}
+  .export-btn{margin-left:auto}
+  .tbl-scroll{max-height:none;overflow:visible;padding:0 10px 10px}
+  table{display:block;font-size:12px}
+  thead{display:none}
+  tbody{display:grid;gap:8px}
+  tbody tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;
+    padding:5px 7px;border:1px solid var(--line);border-radius:8px;background:rgba(13,27,48,.5)}
+  tbody tr:nth-child(even) td,tbody tr:hover td,tbody tr:nth-child(even):hover td{background:transparent}
+  tbody td{display:flex;flex-direction:column;align-items:flex-start;gap:3px;
+    min-width:0;padding:7px 7px;white-space:normal;word-break:break-word;border-bottom:1px solid rgba(29,58,95,.55)}
+  tbody td::before{content:'';font-size:9px;color:var(--tx-4);letter-spacing:.5px}
+  tbody td:nth-child(1)::before{content:'序号'}
+  tbody td:nth-child(2)::before{content:'姓名'}
+  tbody td:nth-child(3)::before{content:'职位'}
+  tbody td:nth-child(4)::before{content:'单位名称'}
+  tbody td:nth-child(5)::before{content:'性别'}
+  tbody td:nth-child(6)::before{content:'政治面貌'}
+  tbody td:nth-child(7)::before{content:'行业'}
+  tbody td:nth-child(8)::before{content:'区域'}
+  tbody td:nth-child(4){grid-column:1/-1}
+  tbody td:last-child{border-bottom:none}
+  tbody td.company{max-width:none;overflow:visible;text-overflow:clip}
   .footer{margin:14px 14px 0}
 }
 @media (max-width:460px){
@@ -363,33 +396,50 @@ tbody tr:nth-child(even):hover td{background:rgba(79,195,247,.06)}
 
 <main>
 
+<!-- ======================= 搜索 ======================= -->
+<section class="search-section">
+  <div class="section-label">快速搜索 <span class="en">SEARCH</span></div>
+  <div class="filters">
+    <label for="globalSearch">搜索会员数据</label>
+    <div class="search-field">
+      <svg class="search-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg>
+      <input id="globalSearch" type="search" autocomplete="off" placeholder="输入姓名、企业、职位、性别、政治面貌、行业、区域、城市或地址">
+    </div>
+    <button class="fbtn rst" id="resetSearchBtn" onclick="App.resetFilters()">
+      <svg class="btn-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.6"></path><path d="M4 5v5h5"></path></svg>
+      重置
+    </button>
+    <span class="result-count" id="resultCount"></span>
+  </div>
+</section>
+
 <!-- ======================= KPI 概览 ======================= -->
 <section>
   <div class="section-label">核心指标 <span class="en">OVERVIEW</span></div>
   <div class="kpi-row">
     <div class="premium-card pcard-total" id="card-total" onclick="App.drilldown('all','',this)">
-      <div class="card-head"><span class="icon">&#127981;</span><span class="title">在籍会员总数</span><span class="click-hint">点击查看全部 &#10095;</span></div>
+      <div class="card-head"><span class="icon"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V8l8-4 8 4v12"></path><path d="M8 20v-6h8v6M8 9h.01M12 9h.01M16 9h.01"></path></svg></span><span class="title">在籍会员总数</span><span class="click-hint">点击查看全部 &#10095;</span></div>
       <div class="card-body"><div class="num" id="kpiTotal">--</div>
         <svg class="donut" viewBox="0 0 36 36"><circle class="ring-bg" cx="18" cy="18" r="15.5"/><circle class="ring-fg" cx="18" cy="18" r="15.5" stroke-dasharray="100 100" transform="rotate(-90 18 18)"/></svg>
       </div>
       <div class="card-sub">全部商会会员单位</div>
     </div>
     <div class="premium-card pcard-male" id="card-male" onclick="App.drilldown('gender','男',this)">
-      <div class="card-head"><span class="icon">&#128104;</span><span class="title">男性会员</span><span class="click-hint">点击查看明细 &#10095;</span></div>
+      <div class="card-head"><span class="icon"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7" r="3"></circle><path d="M5 21c.6-4 2.8-6 7-6s6.4 2 7 6"></path><path d="M19 4h3v3"></path><path d="m22 4-4 4"></path></svg></span><span class="title">男性会员</span><span class="click-hint">点击查看明细 &#10095;</span></div>
       <div class="card-body"><div class="num" id="kpiMale">--</div>
         <svg class="donut" viewBox="0 0 36 36"><circle class="ring-bg" cx="18" cy="18" r="15.5"/><circle class="ring-fg" id="ringMale" cx="18" cy="18" r="15.5" stroke-dasharray="0 100" transform="rotate(-90 18 18)"/></svg>
       </div>
       <div class="card-sub">占比 <span style="color:var(--cyan);font-weight:700" id="pctMale">--</span> · 主力军</div>
     </div>
     <div class="premium-card pcard-female" id="card-female" onclick="App.drilldown('gender','女',this)">
-      <div class="card-head"><span class="icon">&#128105;</span><span class="title">女性会员</span><span class="click-hint">点击查看明细 &#10095;</span></div>
+      <div class="card-head"><span class="icon"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7" r="3"></circle><path d="M5 21c.6-4 2.8-6 7-6s6.4 2 7 6"></path><path d="M12 13v7M9.5 18h5"></path></svg></span><span class="title">女性会员</span><span class="click-hint">点击查看明细 &#10095;</span></div>
       <div class="card-body"><div class="num" id="kpiFemale">--</div>
         <svg class="donut" viewBox="0 0 36 36"><circle class="ring-bg" cx="18" cy="18" r="15.5"/><circle class="ring-fg" id="ringFemale" cx="18" cy="18" r="15.5" stroke-dasharray="0 100" transform="rotate(-90 18 18)"/></svg>
       </div>
       <div class="card-sub">占比 <span style="color:var(--pink);font-weight:700" id="pctFemale">--</span> · 半边天</div>
     </div>
     <div class="premium-card pcard-rate" id="card-rate" onclick="App.drilldown('active','',this)">
-      <div class="card-head"><span class="icon">&#128200;</span><span class="title">在籍率</span><span class="click-hint">点击查看活跃 &#10095;</span></div>
+      <div class="card-head"><span class="icon"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5M4 19h16"></path><path d="m7 15 4-4 3 2 5-7"></path><path d="M16 6h3v3"></path></svg></span><span class="title">在籍率</span><span class="click-hint">点击查看活跃 &#10095;</span></div>
       <div class="card-body"><div class="num" id="kpiRate">--</div>
         <svg class="donut" viewBox="0 0 36 36"><circle class="ring-bg" cx="18" cy="18" r="15.5"/><circle class="ring-fg" id="ringRate" cx="18" cy="18" r="15.5" stroke-dasharray="0 100" transform="rotate(-90 18 18)"/></svg>
       </div>
@@ -398,28 +448,28 @@ tbody tr:nth-child(even):hover td{background:rgba(79,195,247,.06)}
   </div>
   <div class="kpi-row">
     <div class="premium-card pcard-huizhang" id="card-huizhang" onclick="App.drilldown('position','会长',this)">
-      <div class="card-head"><span class="icon">&#128081;</span><span class="title">会长</span><span class="click-hint">点击查看 &#10095;</span></div>
+      <div class="card-head"><span class="icon"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16"></path><path d="M6 19v-7h12v7"></path><path d="M8 12V8h8v4M10 8V5h4v3"></path><path d="M8 15h.01M12 15h.01M16 15h.01"></path></svg></span><span class="title">会长</span><span class="click-hint">点击查看 &#10095;</span></div>
       <div class="card-body"><div class="num" id="kpiHuizhang">--</div>
         <svg class="donut" viewBox="0 0 36 36"><circle class="ring-bg" cx="18" cy="18" r="15.5"/><circle class="ring-fg" cx="18" cy="18" r="15.5" stroke-dasharray="0 100" transform="rotate(-90 18 18)"/></svg>
       </div>
       <div class="card-sub">商会领军人物 · <span class="pill up">核心</span></div>
     </div>
     <div class="premium-card pcard-fuhui" id="card-fuhui" onclick="App.drilldown('position','副会长',this)">
-      <div class="card-head"><span class="icon">&#11088;</span><span class="title">副会长</span><span class="click-hint">点击查看 &#10095;</span></div>
+      <div class="card-head"><span class="icon"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v8M8 12h8"></path></svg></span><span class="title">副会长</span><span class="click-hint">点击查看 &#10095;</span></div>
       <div class="card-body"><div class="num" id="kpiFuhui">--</div>
         <svg class="donut" viewBox="0 0 36 36"><circle class="ring-bg" cx="18" cy="18" r="15.5"/><circle class="ring-fg" cx="18" cy="18" r="15.5" stroke-dasharray="0 100" transform="rotate(-90 18 18)"/></svg>
       </div>
       <div class="card-sub">占比 <span style="color:var(--orange);font-weight:700">--</span> · 商会骨干</div>
     </div>
     <div class="premium-card pcard-lishi" id="card-lishi" onclick="App.drilldown('position','理事',this)">
-      <div class="card-head"><span class="icon">&#127894;</span><span class="title">理事</span><span class="click-hint">点击查看 &#10095;</span></div>
+      <div class="card-head"><span class="icon"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h8M8 16h5"></path></svg></span><span class="title">理事</span><span class="click-hint">点击查看 &#10095;</span></div>
       <div class="card-body"><div class="num" id="kpiLishi">--</div>
         <svg class="donut" viewBox="0 0 36 36"><circle class="ring-bg" cx="18" cy="18" r="15.5"/><circle class="ring-fg" cx="18" cy="18" r="15.5" stroke-dasharray="0 100" transform="rotate(-90 18 18)"/></svg>
       </div>
       <div class="card-sub">占比 <span style="color:var(--teal);font-weight:700">--</span> · 中坚力量</div>
     </div>
     <div class="premium-card pcard-huiyuan" id="card-huiyuan" onclick="App.drilldown('position','会员',this)">
-      <div class="card-head"><span class="icon">&#129309;</span><span class="title">会员</span><span class="click-hint">点击查看 &#10095;</span></div>
+      <div class="card-head"><span class="icon"><svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"></circle><circle cx="17" cy="9" r="2.5"></circle><path d="M3 20c.4-3.5 2.4-5 6-5s5.6 1.5 6 5"></path><path d="M14 15c3 0 5 1.2 6 4"></path></svg></span><span class="title">会员</span><span class="click-hint">点击查看 &#10095;</span></div>
       <div class="card-body"><div class="num" id="kpiHuiyuan">--</div>
         <svg class="donut" viewBox="0 0 36 36"><circle class="ring-bg" cx="18" cy="18" r="15.5"/><circle class="ring-fg" cx="18" cy="18" r="15.5" stroke-dasharray="0 100" transform="rotate(-90 18 18)"/></svg>
       </div>
@@ -432,22 +482,6 @@ tbody tr:nth-child(even):hover td{background:rgba(79,195,247,.06)}
   <button class="add-card-btn" onclick="App.openAddCardModal()">
     <span class="plus">+</span><span>添加自定义卡片</span>
   </button>
-</section>
-
-<!-- ======================= 筛选 ======================= -->
-<section>
-  <div class="section-label">条件筛选 <span class="en">FILTERS</span></div>
-  <div class="filters">
-    <label>性别</label><select id="fGender" onchange="App.applyFilters()"><option value="">全部</option></select>
-    <label>年龄段</label><select id="fAge" onchange="App.applyFilters()"><option value="">全部</option></select>
-    <label>行业</label><select id="fIndustry" style="min-width:130px" onchange="App.applyFilters()"><option value="">全部</option></select>
-    <label>区域</label><select id="fDistrict" onchange="App.applyFilters()"><option value="">全部</option></select>
-    <label>职位</label><select id="fPosition" onchange="App.applyFilters()"><option value="">全部</option></select>
-    <label>政治面貌</label><select id="fPolitical" onchange="App.applyFilters()"><option value="">全部</option></select>
-    <button class="fbtn" onclick="App.applyFilters()">&#128269; 筛选</button>
-    <button class="fbtn rst" onclick="App.resetFilters()">&#8635; 重置</button>
-    <span class="result-count" id="resultCount"></span>
-  </div>
 </section>
 
 <!-- ======================= 地图 ======================= -->
@@ -736,49 +770,30 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
   }
 
   function updateResultCount() {
-    $('resultCount').innerHTML = '筛选结果 <b>' + state.filtered.length + '</b> 人';
+    $('resultCount').innerHTML = '搜索结果 <b>' + state.filtered.length + '</b> 人';
   }
 
-  /* ==================== 筛选 ==================== */
+  /* ==================== 全局搜索 ==================== */
 
-  var FILTER_IDS = ['fGender', 'fAge', 'fIndustry', 'fDistrict', 'fPosition', 'fPolitical'];
-  var FILTER_KEYS = {
-    fGender: '性别', fAge: '年龄段', fIndustry: '所属行业',
-    fDistrict: '区域', fPosition: '会内职位', fPolitical: '政治面貌分类'
-  };
+  var SEARCH_KEYS = ['会员姓名', '单位名称', '会内职位', '性别', '政治面貌分类', '所属行业', '区域', '城市', '注册地址'];
 
-  function initFilters() {
-    var sets = {};
-    FILTER_IDS.forEach(function (id) { sets[id] = {}; });
-    MEMBERS.forEach(function (d) {
-      FILTER_IDS.forEach(function (id) {
-        var v = d[FILTER_KEYS[id]];
-        if (v) sets[id][v] = true;
-      });
-    });
-    FILTER_IDS.forEach(function (id) {
-      var sel = $(id);
-      Object.keys(sets[id]).sort(function (a, b) { return a.localeCompare(b, 'zh'); })
-        .forEach(function (v) {
-          var o = document.createElement('option');
-          o.value = v; o.textContent = v;
-          sel.appendChild(o);
-        });
-    });
+  function searchText(d) {
+    return SEARCH_KEYS.map(function (key) {
+      return d[key] === undefined || d[key] === null ? '' : String(d[key]);
+    }).join(' ').toLocaleLowerCase('zh-CN');
   }
 
   function applyFilters() {
-    var f = {};
-    FILTER_IDS.forEach(function (id) { f[FILTER_KEYS[id]] = $(id).value; });
+    var query = ($('globalSearch').value || '').trim().toLocaleLowerCase('zh-CN');
     state.filtered = MEMBERS.filter(function (d) {
-      return Object.keys(f).every(function (k) { return !f[k] || d[k] === f[k]; });
+      return !query || searchText(d).indexOf(query) >= 0;
     });
     clearActiveCards();
     refreshDataViews();
   }
 
   function resetFilters() {
-    FILTER_IDS.forEach(function (id) { $(id).value = ''; });
+    $('globalSearch').value = '';
     state.filtered = MEMBERS.slice();
     clearActiveCards();
     refreshDataViews();
@@ -790,14 +805,12 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
 
   // KPI 卡片点击下钻：同步筛选器 + 全部数据视图（修复原版图表不联动的问题）
   function drilldown(type, value, el) {
-    FILTER_IDS.forEach(function (id) { $(id).value = ''; });
+    $('globalSearch').value = '';
     if (type === 'all' || type === 'active') {
       state.filtered = MEMBERS.slice();
     } else if (type === 'gender') {
-      $('fGender').value = value;
       state.filtered = MEMBERS.filter(function (d) { return d['性别'] === value; });
     } else if (type === 'position') {
-      $('fPosition').value = value;
       state.filtered = MEMBERS.filter(function (d) { return d['会内职位'] === value; });
     }
     clearActiveCards();
@@ -1246,14 +1259,8 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
     shenyangChart.on('click', function (params) {
       if (params.componentType !== 'geo' && params.componentType !== 'series') return;
       if (!params.name) return;
-      var sel = $('fDistrict');
-      for (var i = 0; i < sel.options.length; i++) {
-        if (sel.options[i].value === params.name) {
-          sel.value = params.name;
-          applyFilters();
-          return;
-        }
-      }
+      $('globalSearch').value = params.name;
+      applyFilters();
     });
   }
 
@@ -1290,7 +1297,6 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
     { key: '会内职位', label: '职位', sortable: true, type: 'position' },
     { key: '单位名称', label: '单位名称', cls: 'company' },
     { key: '性别', label: '性别', type: 'gender' },
-    { key: '年龄段', label: '年龄段', type: 'age' },
     { key: '政治面貌分类', label: '政治面貌', type: 'political' },
     { key: '所属行业', label: '行业' },
     { key: '区域', label: '区域' }
@@ -1304,7 +1310,6 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
     if (col.type === 'gender' && v !== '-') {
       return '<span class="badge ' + (v === '男' ? 'bg-blue' : 'bg-pink') + '">' + v + '</span>';
     }
-    if (col.type === 'age' && v !== '-') return '<span class="badge bg-green">' + v + '</span>';
     if (col.type === 'political' && v !== '-') return '<span class="badge bg-purple">' + v + '</span>';
     if (col.type === 'position' && v !== '-') {
       return '<span class="badge ' + (POS_BADGE[v] || 'bg-blue') + '">' + v + '</span>';
@@ -1360,7 +1365,7 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
   }
 
   function exportCSV() {
-    var cols = ['序号', '会员姓名', '会内职位', '单位名称', '性别', '年龄段', '政治面貌分类', '所属行业', '区域', '城市'];
+    var cols = ['序号', '会员姓名', '会内职位', '单位名称', '性别', '政治面貌分类', '所属行业', '区域', '城市'];
     var rows = sortedRows();
     var lines = [cols.join(',')];
     rows.forEach(function (d) {
@@ -1517,18 +1522,8 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
   }
 
   function customDrilldown(field, value, el) {
-    FILTER_IDS.forEach(function (id) { $(id).value = ''; });
-    var filterMap = {
-      '性别': 'fGender', '年龄段': 'fAge', '所属行业': 'fIndustry',
-      '区域': 'fDistrict', '会内职位': 'fPosition', '政治面貌分类': 'fPolitical'
-    };
+    $('globalSearch').value = '';
     if (value) {
-      if (filterMap[field]) {
-        var sel = $(filterMap[field]);
-        for (var i = 0; i < sel.options.length; i++) {
-          if (sel.options[i].value === value) { sel.value = value; break; }
-        }
-      }
       state.filtered = MEMBERS.filter(function (d) { return d[field] === value; });
     } else {
       state.filtered = MEMBERS.filter(function (d) {
@@ -1561,7 +1556,6 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
   }
 
   function init() {
-    initFilters();
     updateKPI();
     updateResultCount();
 
@@ -1577,6 +1571,10 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
     updateTable();
     renderCustomCards();
 
+    $('globalSearch').addEventListener('input', applyFilters);
+    $('globalSearch').addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') resetFilters();
+    });
     // 表头排序
     $('memberTable').addEventListener('click', onTableHeadClick);
     // Esc 关闭模态框
