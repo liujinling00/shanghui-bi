@@ -414,6 +414,10 @@ tbody tr:nth-child(even):hover td{background:rgba(79,195,247,.06)}
       <svg class="search-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg>
       <input id="globalSearch" type="search" autocomplete="off" placeholder="输入姓名、企业、职位、性别、政治面貌、行业、区域或城市">
     </div>
+    <button class="fbtn" id="searchBtn" onclick="App.applyFilters(true)">
+      <svg class="btn-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg>
+      搜索
+    </button>
     <button class="fbtn rst" id="resetSearchBtn" onclick="App.resetFilters()">
       <svg class="btn-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.6"></path><path d="M4 5v5h5"></path></svg>
       重置
@@ -1605,8 +1609,8 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
     updateTable();
     renderCustomCards();
 
-    $('globalSearch').addEventListener('input', function () { applyFilters(true); });
     $('globalSearch').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') applyFilters(true);
       if (e.key === 'Escape') resetFilters();
     });
     // 表头排序
