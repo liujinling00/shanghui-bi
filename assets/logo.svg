@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">沈阳市年轻一代民营企业家商会标志</title>
+  <desc id="desc">透明背景的沈阳市年轻一代民营企业家商会矢量标志</desc>
+  <defs>
+    <linearGradient id="markGreen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#73d8ab"/>
+      <stop offset="1" stop-color="#1caeae"/>
+    </linearGradient>
+    <linearGradient id="markBlue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#58b9ef"/>
+      <stop offset="1" stop-color="#1466bb"/>
+    </linearGradient>
+    <linearGradient id="markTeal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9ce6dc"/>
+      <stop offset="1" stop-color="#28aeb8"/>
+    </linearGradient>
+    <path id="topArc" d="M 86 226 A 170 170 0 0 1 426 226"/>
+    <path id="bottomArc" d="M 78 292 A 178 178 0 0 0 434 292"/>
+  </defs>
+
+  <g fill="#111827" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="24" font-weight="600" letter-spacing="1.5">
+    <text>
+      <textPath href="#topArc" startOffset="50%" text-anchor="middle">Shenyang Young Generation Entrepreneurs Association</textPath>
+    </text>
+    <text font-family="'Microsoft YaHei', Arial, sans-serif" font-size="25" letter-spacing="4">
+      <textPath href="#bottomArc" startOffset="50%" text-anchor="middle">沈阳市年轻一代民营企业家商会</textPath>
+    </text>
+  </g>
+
+  <g transform="translate(132 142)">
+    <path fill="url(#markGreen)" d="M0 68 86 18l86 50-86 50Z"/>
+    <path fill="url(#markBlue)" d="m86 18 86 50v100l-86 50V118l43-25Z"/>
+    <path fill="url(#markTeal)" d="M0 68v100l86 50V118L43 93Z"/>
+    <path fill="url(#markBlue)" d="m86 118 86-50v100l-86 50Z" opacity=".96"/>
+    <path fill="url(#markGreen)" d="m0 168 86-50v100l-86-50Z" opacity=".9"/>
+    <path fill="#fff" d="m74 116 12-7 19 11-12 7z"/>
+    <path fill="#fff" d="m86 109 19 11-19 11-19-11z" opacity=".88"/>
+  </g>
+</svg>
