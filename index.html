@@ -237,6 +237,14 @@ section{padding:14px 24px 2px}
   border-radius:7px;padding:5px 13px;font-size:11px;cursor:pointer;transition:all .2s}
 .export-btn:hover{border-color:var(--green);color:var(--green);box-shadow:0 0 12px rgba(105,240,174,.18)}
 .tbl-scroll{max-height:330px;overflow:auto;padding:0 16px 12px}
+.back-top-wrap{display:flex;justify-content:flex-end;padding:0 16px 14px}
+.back-top-btn{
+  display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;
+  background:transparent;border:1px solid var(--line-2);border-radius:7px;color:var(--tx-3);
+  cursor:pointer;transition:all .2s var(--ease)
+}
+.back-top-btn:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(79,195,247,.08);box-shadow:0 0 12px rgba(79,195,247,.18)}
+.back-top-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 table{width:100%;border-collapse:collapse;font-size:12px}
 th{
   background:var(--bg-3);color:var(--tx-3);padding:8px 10px;text-align:left;font-weight:600;font-size:11px;letter-spacing:.8px;
@@ -361,6 +369,7 @@ tbody tr:nth-child(even):hover td{background:rgba(79,195,247,.06)}
   tbody td:nth-child(4){grid-column:1/-1}
   tbody td:last-child{border-bottom:none}
   tbody td.company{max-width:none;overflow:visible;text-overflow:clip}
+  .back-top-wrap{padding:0 10px 12px}
   .footer{margin:14px 14px 0}
 }
 @media (max-width:460px){
@@ -537,6 +546,11 @@ tbody tr:nth-child(even):hover td{background:rgba(79,195,247,.06)}
       <button class="export-btn" onclick="App.exportCSV()">&#11015; 导出 CSV</button>
     </div>
     <div class="tbl-scroll" id="memberTable"></div>
+    <div class="back-top-wrap">
+      <button class="back-top-btn" type="button" title="回到最上面" aria-label="回到最上面" onclick="App.backToTop()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5"></path><path d="m6 11 6-6 6 6"></path></svg>
+      </button>
+    </div>
   </div>
 </section>
 
@@ -789,6 +803,13 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
     tablePanel.scrollIntoView({
       behavior: REDUCED_MOTION ? 'auto' : 'smooth',
       block: 'start'
+    });
+  }
+
+  function backToTop() {
+    window.scrollTo({
+      top: 0,
+      behavior: REDUCED_MOTION ? 'auto' : 'smooth'
     });
   }
 
@@ -1604,6 +1625,7 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
     customDrilldown: customDrilldown,
     removeCustomCard: removeCustomCard,
     backToProvince: backToProvince,
+    backToTop: backToTop,
     doRefresh: doRefresh,
     toggleAuto: toggleAuto,
     openAddCardModal: openAddCardModal,
