@@ -403,7 +403,7 @@ tbody tr:nth-child(even):hover td{background:rgba(79,195,247,.06)}
     <label for="globalSearch">搜索会员数据</label>
     <div class="search-field">
       <svg class="search-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg>
-      <input id="globalSearch" type="search" autocomplete="off" placeholder="输入姓名、企业、职位、性别、政治面貌、行业、区域、城市或地址">
+      <input id="globalSearch" type="search" autocomplete="off" placeholder="输入姓名、企业、职位、性别、政治面貌、行业、区域或城市">
     </div>
     <button class="fbtn rst" id="resetSearchBtn" onclick="App.resetFilters()">
       <svg class="btn-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.6"></path><path d="M4 5v5h5"></path></svg>
@@ -775,7 +775,7 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
 
   /* ==================== 全局搜索 ==================== */
 
-  var SEARCH_KEYS = ['会员姓名', '单位名称', '会内职位', '性别', '政治面貌分类', '所属行业', '区域', '城市', '注册地址'];
+  var SEARCH_KEYS = ['会员姓名', '单位名称', '会内职位', '性别', '政治面貌分类', '所属行业', '区域', '城市'];
 
   function searchText(d) {
     return SEARCH_KEYS.map(function (key) {
