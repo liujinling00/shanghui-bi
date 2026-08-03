@@ -653,6 +653,8 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
   var liaoningChart = null;
   var loadedCityMaps = {};
   var zoomDebounceTimer = null;
+  var liaoningPointMode = '';
+  var liaoningPoints = [];
 
   function $(id) { return document.getElementById(id); }
 
@@ -1061,11 +1063,11 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
     liaoningChart = getChart('mapLiaoning');
     echarts.registerMap('liaoning', window.LIAONING_GEO);
 
-    var points = [];
+    liaoningPoints = [];
     MEMBERS.forEach(function (d) {
       if (d.lng != null && d.lat != null) {
         var c = posColor(d['会内职位']);
-        points.push({
+        liaoningPoints.push({
           name: d['会员姓名'],
           value: [d.lng, d.lat, 1],
           company: d['单位名称'] || '',
@@ -1083,7 +1085,7 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
       tooltip: Object.assign({
         trigger: 'item',
         formatter: function (p) {
-          if (p.seriesType === 'scatter') {
+          if (p.seriesType === 'scatter' || p.seriesType === 'effectScatter') {
             var d = p.data;
             return '<b style="color:#4fc3f7">' + d.name + '</b><br/>' +
               d.company + '<br/>行业：' + d.industry + '<br/>职位：' + d.position + '<br/>区域：' + d.district;
@@ -1093,12 +1095,15 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
       }, THEME.tooltip),
       geo: provinceGeoOption(),
       series: [{
-        type: 'scatter', coordinateSystem: 'geo', geoIndex: 0, data: points,
+        type: 'effectScatter', coordinateSystem: 'geo', geoIndex: 0, data: liaoningPoints,
+        symbol: 'circle',
         symbolSize: 7,
         animation: false,
         hoverAnimation: false,
-        progressive: 300,
-        progressiveThreshold: 200,
+        showEffectOn: 'emphasis',
+        rippleEffect: { show: false },
+        progressive: 200,
+        progressiveThreshold: 100,
         itemStyle: { borderColor: '#0a1525', borderWidth: 0.5 },
         emphasis: {
           itemStyle: { color: '#fff', borderColor: '#4fc3f7', borderWidth: 2, shadowBlur: 16, shadowColor: 'rgba(79,195,247,.7)' },
@@ -1112,6 +1117,11 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
         drillDownToCity(params.name);
       }
     });
+    liaoningChart.on('georoam', function () {
+      if (zoomDebounceTimer) cancelAnimationFrame(zoomDebounceTimer);
+      zoomDebounceTimer = requestAnimationFrame(onZoomChanged);
+    });
+    onZoomChanged(true);
   }
 
   function provinceGeoOption() {
@@ -1134,6 +1144,52 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
         }
       }]
     };
+  }
+
+  function getLogoSrc() {
+    var img = $('logoImg');
+    return img ? img.src : '';
+  }
+
+  function onZoomChanged(force) {
+    if (!liaoningChart) return;
+    var opt = liaoningChart.getOption();
+    var geoOpt = opt.geo && opt.geo[0];
+    if (!geoOpt) return;
+    var zoom = geoOpt.zoom || 1;
+    var mode = zoom > 6 ? 'logo' : zoom > 2.8 ? 'large' : 'normal';
+    if (!force && mode === liaoningPointMode) return;
+    liaoningPointMode = mode;
+
+    var logo = getLogoSrc();
+    var pointOption = {
+      type: 'effectScatter',
+      coordinateSystem: 'geo',
+      geoIndex: 0,
+      data: liaoningPoints,
+      animation: false,
+      hoverAnimation: false,
+      showEffectOn: 'emphasis',
+      rippleEffect: { show: false },
+      symbol: 'circle',
+      symbolSize: mode === 'large' ? 10 : 7,
+      progressive: 200,
+      progressiveThreshold: 100,
+      itemStyle: { borderColor: '#0a1525', borderWidth: 0.5 },
+      emphasis: {
+        itemStyle: { color: '#fff', borderColor: '#4fc3f7', borderWidth: 2, shadowBlur: 16, shadowColor: 'rgba(79,195,247,.7)' },
+        scale: 2
+      }
+    };
+    if (mode === 'logo' && logo) {
+      pointOption.symbol = 'image://' + logo;
+      pointOption.symbolSize = 24;
+    }
+    liaoningChart.setOption({
+      animation: false,
+      animationDurationUpdate: 0,
+      series: [pointOption]
+    }, false);
   }
 
   function drillDownToCity(cityName) {
@@ -1186,13 +1242,29 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
         regions: []
       },
       series: [{
+        type: 'effectScatter',
+        coordinateSystem: 'geo',
         geoIndex: 0,
-        symbol: 'circle', symbolSize: 7,
-        itemStyle: { borderColor: '#0a1525', borderWidth: 0.5 }
+        data: liaoningPoints,
+        animation: false,
+        hoverAnimation: false,
+        showEffectOn: 'emphasis',
+        rippleEffect: { show: false },
+        symbol: 'circle',
+        symbolSize: 7,
+        progressive: 200,
+        progressiveThreshold: 100,
+        itemStyle: { borderColor: '#0a1525', borderWidth: 0.5 },
+        emphasis: {
+          itemStyle: { color: '#fff', borderColor: '#4fc3f7', borderWidth: 2, shadowBlur: 16, shadowColor: 'rgba(79,195,247,.7)' },
+          scale: 2
+        }
       }]
     });
     $('mapBackBtn').style.display = 'block';
     $('mapLiaoningTitle').textContent = cityName + ' · 区级企业分布';
+    liaoningPointMode = '';
+    onZoomChanged(true);
   }
 
   function backToProvince() {
@@ -1201,10 +1273,30 @@ var MEMBER_DATA = [{"序号":1,"会员姓名":"陈晓波","会内职位":"会长
       animation: false,
       animationDurationUpdate: 0,
       geo: provinceGeoOption(),
-      series: [{ geoIndex: 0 }]
+      series: [{
+        type: 'effectScatter',
+        coordinateSystem: 'geo',
+        geoIndex: 0,
+        data: liaoningPoints,
+        animation: false,
+        hoverAnimation: false,
+        showEffectOn: 'emphasis',
+        rippleEffect: { show: false },
+        symbol: 'circle',
+        symbolSize: 7,
+        progressive: 200,
+        progressiveThreshold: 100,
+        itemStyle: { borderColor: '#0a1525', borderWidth: 0.5 },
+        emphasis: {
+          itemStyle: { color: '#fff', borderColor: '#4fc3f7', borderWidth: 2, shadowBlur: 16, shadowColor: 'rgba(79,195,247,.7)' },
+          scale: 2
+        }
+      }]
     });
     $('mapBackBtn').style.display = 'none';
     $('mapLiaoningTitle').textContent = LN_TITLE_DEFAULT;
+    liaoningPointMode = '';
+    onZoomChanged(true);
   }
 
   /* ==================== 沈阳热力图（随筛选联动） ==================== */
