@@ -1,0 +1,8 @@
+# 纯静态站点：无需构建，直接发布仓库根目录
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/data/*.json"
+  [headers.values]
+    Cache-Control = "no-cache"
